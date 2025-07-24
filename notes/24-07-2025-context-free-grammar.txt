@@ -1,0 +1,71 @@
+                Our context-free grammar:
+Each rule(a production) is a name followed by an arrow(->), followed by a list of symbols and finally ending with a
+semicolon. Terminal are quoted string, and nonterminal are lowercase string.
+
+                A grammar for JLox(also Lox):
+For now, our grammar is simple, and it is as followed:
+                    expression     → literal
+                                   | unary
+                                   | binary
+                                   | grouping ;
+
+                    literal        → NUMBER | STRING | "true" | "false" | "nil" ;
+                    grouping       → "(" expression ")" ;
+                    unary          → ( "-" | "!" ) expression ;
+                    binary         → expression operator expression ;
+                    operator       → "==" | "!=" | "<" | "<=" | ">" | ">="
+                                   | "+"  | "-"  | "*" | "/" ;
+
+
+
+Example: a breakfast menus:
+                    breakfast  → protein "with" breakfast "on the side" ;
+                    breakfast  → protein ;
+                    breakfast  → bread ;
+
+                    protein    → crispiness "crispy" "bacon" ;
+                    protein    → "sausage" ;
+                    protein    → cooked "eggs" ;
+
+                    crispiness → "really" ;
+                    crispiness → "really" crispiness ;
+
+                    cooked     → "scrambled" ;
+                    cooked     → "poached" ;
+                    cooked     → "fried" ;
+
+                    bread      → "toast" ;
+                    bread      → "biscuits" ;
+                    bread      → "English muffin" ;
+
+    Enhancing the notation:
+
+* instead of repeating the name of a production each time we want to add another production for it, we
+will simply separate the list of production with a pipe (|).
+    e.g: bread -> "toast" | "biscuits" | "English muffin".
+
+* Further, we’ll allow parentheses for grouping and then allow | within
+that to select one from a series of options within the middle of a production.
+    e.g: protein → ( "scrambled" | "poached" | "fried" ) "eggs" ;
+
+* we use a postfix * to allow the previous symbol or group of symbols to repeat one or more times.
+    e.g: crispiness -> "really" "really"* ;
+
+* the postfix + is similar, but it requires the previous symbol to appear at least one time.
+    e.g: crispiness -> "really"+ ;
+
+* A postfix ? is for an optional production. The thing before it can appear zero or one time, but not more.
+    e.g: breakfast → protein ( "with" breakfast "on the side" )? ;
+
+        With these syntactic sugar, the example grammar for the breakfast condenses to :
+
+            breakfast → protein ( "with" breakfast "on the side" )?
+                      | bread ;
+
+            protein   → "really"+ "crispy" "bacon"
+                      | "sausage"
+                      | ( "scrambled" | "poached" | "fried" ) "eggs" ;
+
+            bread     → "toast" | "biscuits" | "English muffin" ;
+
+

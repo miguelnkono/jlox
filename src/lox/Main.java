@@ -72,6 +72,7 @@ public class Main {
             if (line.startsWith(".exit")) {
                 break;
             }
+            // here we execute the interpreter with the line string as input.
             run(line);
             hadError = false;
         }
