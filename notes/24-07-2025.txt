@@ -1,0 +1,28 @@
+This is JLox, a subset of the Lox programming language implemented in Java,
+ the programming language that I am going to programme to learn how
+compiler and interpreter are made.
+
+I am Nkono Ndeme Miguel, an engineer at IAI-Cameroon doing System stuff.
+
+-----------------------------------------------------------------------------
+
+First program in Lox language looks like this:
+    print "Hello, world!";
+
+There are two main ways of managing memory:
+    * reference counting
+    * tracing garbage collection (garbage collection or GC)
+In JLox we are going to implement tracing garbage collection to manage the memory allocated
+for objects cycle.
+
+A token contents:
+    * lexeme
+    * tokenType
+    * tokenLiteral
+    * tokenLine
+
+
+                            ** QUOTE OF THE DAY **
+
+    ``Take a big bites. Anything worth doing is worth overdoing.``
+        - Robert A.Heinlein, Time Enough For Love
