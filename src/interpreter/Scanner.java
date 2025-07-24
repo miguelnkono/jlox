@@ -92,7 +92,7 @@ public class Scanner {
                     // this is for comments in JLox.
                     while (peek() != '\n' && !isAtEnd()) advance();
                 } else if (match('*')) {
-                    comment(c);
+                    comment();
                 } else {
                     addToken(SLASH);
                 }
@@ -126,21 +126,27 @@ public class Scanner {
         }
     }
 
-    // support for multiple comment.
-    private void comment(char c) {
-        if (c == '*' && peekNext() == '/') {
-            advance();
-            advance();
-            return;
-        } else if (c == '/' && peekNext() == '*') {
-            advance();
-            comment(source.charAt(current));
+    private void comment() {
+        int nesting = 1;
+        while (nesting > 0 && !isAtEnd()) {
+            char c = peek();
+            char next = peekNext();
+            if (c == '/' && next == '*') {
+                advance();
+                advance();
+                nesting++;
+            } else if (c == '*' && next == '/') {
+                advance();
+                advance();
+                nesting--;
+            } else {
+                if (c == '\n') line++;
+                advance();
+            }
         }
-
-        if (c == '\n') line++;
-
-        advance();
-        comment(source.charAt(current));
+        if (nesting > 0) {
+            Main.error(line, "Unterminated comment.");
+        }
     }
 
     private void identifier() {
