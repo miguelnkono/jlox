@@ -1,7 +1,7 @@
 package interpreter;
 
 public class Token {
-    private final String lexeme;
+    public final String lexeme;
     private final TokenType tokenType;
     private final Object literal;
     private final int tokenLine;
