@@ -132,18 +132,22 @@ public class Scanner {
             char c = peek();
             char next = peekNext();
             if (c == '/' && next == '*') {
+                // we create a new nested level.
                 advance();
                 advance();
                 nesting++;
             } else if (c == '*' && next == '/') {
+                // close a nested level.
                 advance();
                 advance();
                 nesting--;
             } else {
+                // here we add support for multiline comments.
                 if (c == '\n') line++;
                 advance();
             }
         }
+        // if the nesting number is greater than 0 then it means we missed a nested level.
         if (nesting > 0) {
             Main.error(line, "Unterminated comment.");
         }

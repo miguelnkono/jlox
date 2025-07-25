@@ -1,0 +1,14 @@
+                The expression problem
+
+The expression problem is when we try to find the best way to add types and operations to a system easily.
+To overcome this problem, we will use in our interpreter the 'Visitor pattern' design pattern.
+
+                Visitor pattern
+
+The visitor pattern is all about approximating the functional style within an OOP language.
+It lets us add new operations easily for multiple types.
+Using this pattern, we define how the new operation will behave on a set of types in one place without
+touching the types themselves.
+It does this by adding a new layer of 'indirection'.
+
+
