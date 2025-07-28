@@ -1,7 +1,11 @@
 package lox;
 
+import ast.Expr;
 import interpreter.Scanner;
 import interpreter.Token;
+import interpreter.TokenType;
+import parser.Parser;
+import tools.AstPrinter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,9 +43,13 @@ public class Main {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
 
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+        Parser parser = new Parser(tokens);
+        Expr expression = parser.parse();
+
+        // stop if there is an error in the parsing.
+        if (hadError) return;
+
+        System.out.println(new AstPrinter().print(expression));
     }
 
     /*
@@ -91,5 +99,13 @@ public class Main {
     * */
     public static void error(int line, String msg) {
         report(line, null, msg);
+    }
+
+    public static void error(Token token, String message) {
+        if (token.type() == TokenType.EOF) {
+            report(token.line(), " at end", message);
+        } else {
+            report(token.line(), " at '" + token.lexeme + "'", message);
+        }
     }
 }

@@ -5,7 +5,7 @@ import interpreter.Token;
 import interpreter.TokenType;
 
 public class AstPrinter implements Expr.Visitor<String> {
-    String print(Expr expr) {
+    public String print(Expr expr) {
         return expr.accept(this);
     }
 
@@ -55,6 +55,17 @@ public class AstPrinter implements Expr.Visitor<String> {
                 )
         );
 
+        Expr expression2 = new Expr.Binary(
+                new Expr.Unary(new Token("", null, null, 1), new Expr.Literal(5)),
+                new Token("+", TokenType.PLUS, null, 1),
+                new Expr.Binary(
+                        new Expr.Literal(1),
+                        new Token("*", TokenType.STAR, null, 1),
+                        new Expr.Literal(6)
+                )
+        );
+
         System.out.println(new AstPrinter().print(expression));
+        System.out.println(new AstPrinter().print(expression2));
     }
 }

@@ -1,6 +1,6 @@
                 Our context-free grammar:
 Each rule(a production) is a name followed by an arrow(->), followed by a list of symbols and finally ending with a
-semicolon. Terminal are quoted string, and nonterminal are lowercase string.
+semicolon(;). Terminals are double-quoted string, and nonterminal are lowercase string.
 
                 A grammar for JLox(also Lox):
 For now, our grammar is simple, and it is as followed:
@@ -48,7 +48,7 @@ will simply separate the list of production with a pipe (|).
 that to select one from a series of options within the middle of a production.
     e.g: protein → ( "scrambled" | "poached" | "fried" ) "eggs" ;
 
-* we use a postfix * to allow the previous symbol or group of symbols to repeat one or more times.
+* we use a postfix * to allow the previous symbol or group of symbols to repeat zero or more times.
     e.g: crispiness -> "really" "really"* ;
 
 * the postfix + is similar, but it requires the previous symbol to appear at least one time.

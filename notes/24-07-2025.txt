@@ -25,7 +25,7 @@ A token contents:
 The grammar used in the scanner is called: 'regular language'.
 The grammar used in the parsers is called: 'context-free grammar (CFG).'.
 A CFG takes a set of atomic species that it calls 'alphabet' then defines a set of 'string' that are
-if that grammar. Each string is a sequence of 'letters' in the 'alphabet'.
+in that grammar. Each string is a sequence of 'letters' in the 'alphabet'.
 
 A Grammar is a finite set of 'rules' that is used to generate an infinite set of 'strings'.
 A 'derivation' is a 'string' produced using a rule of the grammar.
@@ -33,9 +33,9 @@ A 'production' is a rule of the grammar.
 
 Each 'production' in a grammar has a 'head'(its name) and a 'body'(what it generates). The body of
 a production is simply a list of symbols and each symbol comes in two flavors:
-    * 'terminal' which is a letter of the 'alphabet', terminal can no longer produce anything for the string.
-    * 'nonterminal' which is a named reference to another rule in the grammar.
-We can have multiple rules with the same name and when we hit the nonterminal rule referencing it, we
+    * 'terminal' which is a 'letter' of the 'alphabet', terminal can no longer produce anything for the string.
+    * 'nonterminal' which is a named reference to another 'rule'(production) in the grammar.
+We can have multiple rules with the same name and when we hit the nonterminal rule referencing them, we
 can choose one of those multiple rules.
 
 We will use the 'Backus-Naur form (BNF)' to represent our grammar.

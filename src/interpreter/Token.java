@@ -13,6 +13,18 @@ public class Token {
         this.tokenLine = tokenLine;
     }
 
+    public TokenType type() {
+        return tokenType;
+    }
+
+    public Object literal() {
+        return literal;
+    }
+
+    public int line() {
+        return tokenLine;
+    }
+
     @Override
     public String toString() {
         return "%s %s %s".formatted(tokenType, lexeme, tokenLine);

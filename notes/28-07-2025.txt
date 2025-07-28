@@ -1,0 +1,37 @@
+                            ** QUOTE OF THE DAY **
+
+        ``Grammar, which knows how to control even kings, should be able to control us.``
+            - Molière, Le Bourgeois Gentilhomme
+
+Parsing means taking a letter from the alphabet and map it with a rule in the grammar.
+
+Given a 'string', the parser produce 'terminales' in the grammar to figure out which rules could have generated that string.
+
+
+The precedence is the priority of the rule in the grammar.
+The associativity is the direction of the rule in the grammar.
+The left associativity means that the rule is applied from left to right.
+The right associativity means that the rule is applied from right to left.
+
+The precedence and associativity are used to determine which rule should be applied first.
+
+        Applying the precedence, associativity and left and right associativity to our grammar.
+
+        expression     → equality ;
+        equality       → comparison ( ( "==" | "!=" ) comparison )* ;
+        comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+        term           → factor ( ( "+" | "-" ) factor )* ;
+        factor         → unary ( ( "/" | "*" ) unary )* ;
+        unary          → ( "-" | "!" ) unary | primary ;
+        primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
+
+Each rule matches its precedence level and higher.
+
+For our JLox language, we are going to use the 'recursive descent parsing' technique, which is a top-down parsing technique.
+It is a simple and efficient way to parse a context-free grammar.
+The idea is to start with the highest precedence rule and then recursively call the lower precedence rules until we reach
+the lowest precedence rule, which is the primary rule.
+The parser will then return the result of the parsing, which is a tree of expressions.
+
+Each rule in the grammar is implemented as a function in the parser.
+The function will take the input string and return the result of the parsing.
