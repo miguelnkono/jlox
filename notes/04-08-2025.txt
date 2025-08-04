@@ -1,0 +1,23 @@
+		`You are my creator, but I am your master; Obey!`
+				- Mary Shelley, Frankenstein
+
+Ways a language implementation can execute the code of the user is by: 
+	* compile it to machine code;
+	* translate it to another high-level language;
+	* reduce it to some bytecode for used in a virtual machine.
+But we can also execute the syntax tree itself and that's exactly what we are going to do.
+
+When evaluating, we need answers for these two questions:
+	* what kind of value do we produce?
+	* how are we going to organize the code that is going to evaluate the syntax tree?
+
+For this implementation of the Lox language, we are going to use the 'java.lang.Object' class
+to hold the value and the type of a variable in Jlox(which is the implementation of the Lox language in Java).
+
+		Lox type				Java representation
+		Any lox value			Object
+		nil						nil
+		number					Double
+		boolean 				Boolean
+		string 					String
+				
