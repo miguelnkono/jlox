@@ -1,6 +1,8 @@
 package lox;
 
 import ast.Expr;
+import evaluate.Interpretor;
+import evaluate.RuntimeError;
 import interpreter.Scanner;
 import interpreter.Token;
 import interpreter.TokenType;
@@ -16,7 +18,9 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class Main {
-    private static boolean hadError;
+    private static final Interpretor interpretor = new Interpretor();
+    private static boolean hadError = false;
+    private static boolean hadRuntimeError = false;
 
     public static void main(String[] args) throws IOException {
         // here we access the length of the command line arguments, and we branch on the
@@ -49,7 +53,7 @@ public class Main {
         // stop if there is an error in the parsing.
         if (hadError) return;
 
-        System.out.println(new AstPrinter().print(expression));
+        interpretor.interpret(expression);
     }
 
     /*
@@ -62,6 +66,7 @@ public class Main {
 
         // if an error occurs.
         if (hadError) System.exit(65);
+        if (hadRuntimeError) System.exit(70);
     }
 
     /*
@@ -77,6 +82,7 @@ public class Main {
             System.out.print("> ");
             // we read the inputs, and we pass it to the interpreter.
             String line = reader.readLine();
+            // exit the program
             if (line.startsWith(".exit")) {
                 break;
             }
@@ -107,5 +113,13 @@ public class Main {
         } else {
             report(token.line(), " at '" + token.lexeme + "'", message);
         }
+    }
+
+    /*
+    * this function report a runtime error to the user.
+    * */
+    public static void runtimeError(RuntimeError error) {
+        System.err.printf("%s\n[line %d]%n", error.getMessage(), error.token().line());
+        hadRuntimeError = true;
     }
 }
