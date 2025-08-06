@@ -1,6 +1,6 @@
 # JLox Interpreter (Java)
 
-A self-taught implementation of the JLox interpreter in Java, inspired by the book [Crafting Interpreters](https://craftinginterpreters.com/). This project is a learning exercise to understand how programming languages and interpreters work from the ground up.
+A self-taught implementation of the JLox scanner in Java, inspired by the book [Crafting Interpreters](https://craftinginterpreters.com/). This project is a learning exercise to understand how programming languages and interpreters work from the ground up.
 
 ## Features
 
@@ -23,7 +23,7 @@ A self-taught implementation of the JLox interpreter in Java, inspired by the bo
 **Using Maven:**
 ```sh
 mvn clean package
-java -jar target/jlox.jar [script.lox]This is the JLox interpreter implementation in Java language.
+java -jar target/jlox.jar [script.lox]This is the JLox scanner implementation in Java language.
 ```
 
 ## Example

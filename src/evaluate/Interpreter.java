@@ -5,14 +5,19 @@ import ast.Expr.Binary;
 import ast.Expr.Grouping;
 import ast.Expr.Literal;
 import ast.Expr.Unary;
-import interpreter.Token;
+import scanner.Token;
 import lox.Main;
 
-public class Interpretor implements Expr.Visitor<Object> {
+public class Interpreter implements Expr.Visitor<Object> {
 
+	/*
+	* Function to interpret the ast.
+	* */
 	public void interpret(Expr expr) {
 		try {
+			// evaluate the expression.
 			Object value = evaluate(expr);
+			// printing the result to the user screen.
 			System.out.println(stringify(value));
 		} catch (RuntimeError re) {
 			Main.runtimeError(re);
@@ -33,10 +38,10 @@ public class Interpretor implements Expr.Visitor<Object> {
 		return object.toString();
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	@Override
 	public Object visitBinaryExpr(Binary expr) {
-		// 5 + 10;
-		// left token operator right token
+		// [left-token operator right-token]
 		Object leftValue = evaluate(expr.left);		// left token evaluated
 		Object rightValue = evaluate(expr.right);	// right token evaluated
 
@@ -58,7 +63,7 @@ public class Interpretor implements Expr.Visitor<Object> {
 				if (leftValue instanceof String && rightValue instanceof String)
 					return (String) leftValue + (String) rightValue;
 				// if neither of the two operands are numbers or strings we raise a runtime error.
-				throw new RuntimeError(expr.operator, "Operands must two numbers or strings.");
+				throw new RuntimeError(expr.operator, "Operands must be two numbers or strings.");
             case GREATER:
 				checkNumberOperands(expr.operator, leftValue, rightValue);
 				return (double) leftValue > (double) rightValue;
@@ -97,6 +102,7 @@ public class Interpretor implements Expr.Visitor<Object> {
 		return expr.value;
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	@Override
 	public Object visitUnaryExpr(Unary expr) {
 		// we evaluate the right operant first.

@@ -1,13 +1,13 @@
 package parser;
 
 import ast.Expr;
-import interpreter.Token;
-import interpreter.TokenType;
+import scanner.Token;
+import scanner.TokenType;
 import lox.Main;
 
 import java.util.List;
 
-import static interpreter.TokenType.*;
+import static scanner.TokenType.*;
 
 public class Parser {
     private final List<Token> tokens;   // this is the list of tokens to parse. Also known as the 'letters' in the alphabet.
@@ -114,6 +114,7 @@ public class Parser {
         throw error(peek(), s);
     }
 
+    @SuppressWarnings({ "unused", "incomplete-switch" })
     private void synchronize() {
         advance();
 

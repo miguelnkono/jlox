@@ -1,6 +1,6 @@
 package ast;
 
-import interpreter.Token;
+import scanner.Token;
 
 public abstract class Expr {
   public interface Visitor<R> {

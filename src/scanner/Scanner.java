@@ -1,4 +1,4 @@
-package interpreter;
+package scanner;
 
 import lox.Main;
 
@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static interpreter.TokenType.*;
+import static scanner.TokenType.*;
 
 public class Scanner {
     private final String source; // the source code of the user.

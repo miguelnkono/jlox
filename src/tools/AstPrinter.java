@@ -1,8 +1,8 @@
 package tools;
 
 import ast.Expr;
-import interpreter.Token;
-import interpreter.TokenType;
+import scanner.Token;
+import scanner.TokenType;
 
 public class AstPrinter implements Expr.Visitor<String> {
     public String print(Expr expr) {

@@ -1,14 +1,12 @@
 package lox;
 
 import ast.Expr;
-import evaluate.Interpretor;
+import evaluate.Interpreter;
 import evaluate.RuntimeError;
-import interpreter.Scanner;
-import interpreter.Token;
-import interpreter.TokenType;
+import scanner.Scanner;
+import scanner.Token;
+import scanner.TokenType;
 import parser.Parser;
-import tools.AstPrinter;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,7 +16,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class Main {
-    private static final Interpretor interpretor = new Interpretor();
+    private static final Interpreter INTERPRETER = new Interpreter();
     private static boolean hadError = false;
     private static boolean hadRuntimeError = false;
 
@@ -53,7 +51,7 @@ public class Main {
         // stop if there is an error in the parsing.
         if (hadError) return;
 
-        interpretor.interpret(expression);
+        INTERPRETER.interpret(expression);
     }
 
     /*

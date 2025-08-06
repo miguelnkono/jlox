@@ -1,6 +1,6 @@
 package evaluate;
 
-import interpreter.Token;
+import scanner.Token;
 
 public class RuntimeError extends RuntimeException{
     private final Token token;

@@ -15,7 +15,7 @@ The right associativity means that the rule is applied from right to left.
 
 The precedence and associativity are used to determine which rule should be applied first.
 
-        Applying the precedence, associativity and left and right associativity to our grammar.
+        Applying the precedence, associativity and left and right associativity to our grammar:
 
         expression     → equality ;
         equality       → comparison ( ( "==" | "!=" ) comparison )* ;

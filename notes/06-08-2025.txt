@@ -1,0 +1,7 @@
+        `All my live, my heard has been yearned for a thing I cannot name`
+                - André Breton, Mad Love
+- An 'expression' is a piece of code that 'evaluate' to a value.
+- A 'statement' is a complete portion of code that 'performs' an action.
+
+An 'expression statement' is when we use an expression to create a statement. It's like when we call a function in C and pass its result to a variable. There
+we are creating an expression statement. Example: int foo = Foo(); This is an expression statement.
