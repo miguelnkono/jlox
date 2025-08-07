@@ -5,23 +5,29 @@ import ast.Expr.Binary;
 import ast.Expr.Grouping;
 import ast.Expr.Literal;
 import ast.Expr.Unary;
+import ast.Stmt;
 import scanner.Token;
 import lox.Main;
 
-public class Interpreter implements Expr.Visitor<Object> {
+import java.util.List;
+
+public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
 	/*
 	* Function to interpret the ast.
 	* */
-	public void interpret(Expr expr) {
+	public void interpret(List<Stmt> statements) {
 		try {
-			// evaluate the expression.
-			Object value = evaluate(expr);
-			// printing the result to the user screen.
-			System.out.println(stringify(value));
+			for (Stmt statement : statements) {
+				execute(statement);
+			}
 		} catch (RuntimeError re) {
 			Main.runtimeError(re);
 		}
+	}
+
+	private void execute(Stmt statement) {
+		statement.accept(this);
 	}
 
 	private String stringify(Object object) {
@@ -148,4 +154,16 @@ public class Interpreter implements Expr.Visitor<Object> {
 		return true;
 	}
 
+	@Override
+	public Void visitExpressionStmt(Stmt.Expression stmt) {
+		evaluate(stmt.expression);
+		return null;
+	}
+
+	@Override
+	public Void visitPrintStmt(Stmt.Print stmt) {
+		Object evaluated = evaluate(stmt.expression);
+		System.out.println(stringify(evaluated));
+		return null;
+	}
 }

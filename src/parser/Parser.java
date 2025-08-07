@@ -1,10 +1,12 @@
 package parser;
 
 import ast.Expr;
+import ast.Stmt;
 import scanner.Token;
 import scanner.TokenType;
 import lox.Main;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static scanner.TokenType.*;
@@ -18,12 +20,34 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    public Expr parse() {
-        try {
-            return expression();
-        } catch (ParseError error) {
-            return null;
+    public List<Stmt> parse() {
+        List<Stmt> stmtList = new ArrayList<>();
+        while (!isAtEnd()) {
+            stmtList.add(statement());
         }
+        
+        return stmtList;
+    }
+
+    // parse the program from the very beginning of the script.
+    private Stmt statement() {
+        if (match(PRINT)){ return printStatement();}
+
+        return expressionStatement();
+    }
+
+    // parse an expressionStatement node.
+    private Stmt expressionStatement() {
+        Expr value = expression();
+        consume(SEMICOLON, "Except ';' after the value.");
+        return new Stmt.Expression(value);
+    }
+
+    // parse print statements.
+    private Stmt printStatement() {
+        Expr value = expression();
+        consume(SEMICOLON, "Except ';' after the value");
+        return new Stmt.Print(value);
     }
 
     // parse the expression rule.
@@ -109,6 +133,7 @@ public class Parser {
     }
 
     private Token consume(TokenType tokenType, String s) {
+        System.out.println(peek());
         if (check(tokenType)) advance();
 
         throw error(peek(), s);
