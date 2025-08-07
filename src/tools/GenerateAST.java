@@ -18,12 +18,19 @@ public class GenerateAST {
         }
 
         String outputDirectory = args[0];   // get the output directory.
+
+        // description of subclasses.
         List<String> subclassesDescription = Arrays.asList(
-                "Binary     : Expr left, Token operator, Expr right",
-                "Grouping   : Expr expression",
-                "Literal    : Object value",
-                "Unary      : Token operator, Expr right"
+                "Binary         : Expr left, Token operator, Expr right",
+                "Grouping       : Expr expression",
+                "Literal        : Object value",
+                "Unary          : Token operator, Expr right"
         );
+
+        defineAst(outputDirectory, "Stmt", Arrays.asList(
+                "Expression     : Expr expression",
+                "Print          : Expr expression"
+        ));
         defineAst(outputDirectory, "Expr", subclassesDescription);
     }
 
@@ -39,7 +46,7 @@ public class GenerateAST {
         writer.println();
         writer.println("import java.util.List;");
         writer.println();
-        writer.printf("abstract class %s {%n", baseName);
+        writer.printf("public abstract class %s {%n", baseName);
 
         defineVisitor(writer, baseName, types);
 
@@ -52,7 +59,7 @@ public class GenerateAST {
 
         // The base accept() method.
         writer.println();
-        writer.println("  abstract <R> R accept(Visitor<R> visitor);");
+        writer.println("public  abstract <R> R accept(Visitor<R> visitor);");
 
         writer.println("}");
         writer.close();
@@ -60,7 +67,7 @@ public class GenerateAST {
 
     private static void defineVisitor(
             PrintWriter writer, String baseName, List<String> types) {
-        writer.println("  interface Visitor<R> {");
+        writer.println("public  interface Visitor<R> {");
 
         for (String type : types) {
             String typeName = type.split(":")[0].trim();
@@ -73,10 +80,10 @@ public class GenerateAST {
     private static void defineType(
             PrintWriter writer, String baseName,
             String className, String fieldList) {
-        writer.printf("  static class %s extends %s {%n", className, baseName);
+        writer.printf("public  static class %s extends %s {%n", className, baseName);
 
         // Constructor.
-        writer.printf("    %s(%s) {%n", className, fieldList);
+        writer.printf("public    %s(%s) {%n", className, fieldList);
 
         // Store parameters in fields.
         String[] fields = fieldList.split(", ");
@@ -90,14 +97,14 @@ public class GenerateAST {
         // Visitor pattern.
         writer.println();
         writer.println("    @Override");
-        writer.println("    <R> R accept(Visitor<R> visitor) {");
-        writer.printf("      return visitor.visit%s%s(this);%n", className, baseName);
+        writer.println("    public <R> R accept(Visitor<R> visitor) {");
+        writer.printf("         return visitor.visit%s%s(this);%n", className, baseName);
         writer.println("    }");
 
         // Fields.
         writer.println();
         for (String field : fields) {
-            writer.printf("    final %s;%n", field);
+            writer.printf("    public final %s;%n", field);
         }
 
         writer.println("  }");
