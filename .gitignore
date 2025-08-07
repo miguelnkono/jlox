@@ -30,3 +30,6 @@ bin/
 
 ### tools directories ###
 tools/visitor_pattern/
+
+### test lox scripts directory ###
+tests/

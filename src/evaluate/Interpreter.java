@@ -5,23 +5,30 @@ import ast.Expr.Binary;
 import ast.Expr.Grouping;
 import ast.Expr.Literal;
 import ast.Expr.Unary;
+import ast.Stmt;
 import scanner.Token;
 import lox.Main;
 
-public class Interpreter implements Expr.Visitor<Object> {
+import java.util.List;
+import java.util.Objects;
+
+public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
 	/*
 	* Function to interpret the ast.
 	* */
-	public void interpret(Expr expr) {
+	public void interpret(List<Stmt> statements) {
 		try {
-			// evaluate the expression.
-			Object value = evaluate(expr);
-			// printing the result to the user screen.
-			System.out.println(stringify(value));
+			for (Stmt statement : statements) {
+				execute(statement);
+			}
 		} catch (RuntimeError re) {
 			Main.runtimeError(re);
 		}
+	}
+
+	private void execute(Stmt statement) {
+		statement.accept(this);
 	}
 
 	private String stringify(Object object) {
@@ -120,6 +127,11 @@ public class Interpreter implements Expr.Visitor<Object> {
 		return null;
 	}
 
+	@Override
+	public Object visitVariableExpr(Expr.Variable expr) {
+		return null;
+	}
+
 	// function to return a runtime error
 	private void checkNumberOperand(Token operator, Object operand) {
 		if (operand instanceof Double) return;
@@ -143,9 +155,28 @@ public class Interpreter implements Expr.Visitor<Object> {
 
 	// function to check the equality of two values.
 	private Boolean isEqual(Object left, Object right) {
-		if (left == null && right == null) return true;
-		if (left == null) return false;
-		return true;
+//		if (left == right) return true;
+//		if (left == null | right == null) return false;
+//		return left.equals(right);
+		// shorter way.
+		return Objects.equals(left, right);
 	}
 
+	@Override
+	public Void visitExpressionStmt(Stmt.Expression stmt) {
+		evaluate(stmt.expression);
+		return null;
+	}
+
+	@Override
+	public Void visitPrintStmt(Stmt.Print stmt) {
+		Object evaluated = evaluate(stmt.expression);
+		System.out.println(stringify(evaluated));
+		return null;
+	}
+
+	@Override
+	public Void visitVarStmt(Stmt.Var stmt) {
+		return null;
+	}
 }

@@ -1,6 +1,6 @@
 package lox;
 
-import ast.Expr;
+import ast.Stmt;
 import evaluate.Interpreter;
 import evaluate.RuntimeError;
 import scanner.Scanner;
@@ -46,12 +46,12 @@ public class Main {
         List<Token> tokens = scanner.scanTokens();
 
         Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
+        List<Stmt> statements = parser.parse();
 
         // stop if there is an error in the parsing.
         if (hadError) return;
 
-        INTERPRETER.interpret(expression);
+        INTERPRETER.interpret(statements);
     }
 
     /*
