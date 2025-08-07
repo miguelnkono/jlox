@@ -23,15 +23,40 @@ public class Parser {
     public List<Stmt> parse() {
         List<Stmt> stmtList = new ArrayList<>();
         while (!isAtEnd()) {
-            stmtList.add(statement());
+            stmtList.add(declaration());
         }
         
         return stmtList;
     }
 
+    private Stmt declaration() {
+        try {
+            if (match(VAR)) return varDeclaration();
+
+            return statement();
+        } catch (ParseError error) {
+            synchronize();
+            return null;
+        }
+    }
+
+    private Stmt varDeclaration() {
+        Token name = consume(IDENTIFIER, "Expect variable name");
+
+        Expr initial = null;
+        if (match(EQUAL)) {
+            initial = expression();
+        }
+
+        consume(SEMICOLON, "Expect ';' after variable declaration.");
+        return new Stmt.Var(name, initial);
+    }
+
     // parse the program from the very beginning of the script.
     private Stmt statement() {
-        if (match(PRINT)){ return printStatement();}
+        if (match(PRINT)){
+            return printStatement();
+        }
 
         return expressionStatement();
     }
@@ -129,12 +154,17 @@ public class Parser {
             return new Expr.Grouping(expr);
         }
 
+        if (match(VAR)) {
+            return new Expr.Variable(previous());
+        }
+
         throw error(peek(), "Expect expression.");
     }
 
     private Token consume(TokenType tokenType, String s) {
-        System.out.println(peek());
-        if (check(tokenType)) advance();
+        if (check(tokenType)) {
+            return advance();
+        }
 
         throw error(peek(), s);
     }

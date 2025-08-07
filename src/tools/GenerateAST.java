@@ -24,12 +24,14 @@ public class GenerateAST {
                 "Binary         : Expr left, Token operator, Expr right",
                 "Grouping       : Expr expression",
                 "Literal        : Object value",
-                "Unary          : Token operator, Expr right"
+                "Unary          : Token operator, Expr right",
+                "Variable       : Token name"
         );
 
         defineAst(outputDirectory, "Stmt", Arrays.asList(
                 "Expression     : Expr expression",
-                "Print          : Expr expression"
+                "Print          : Expr expression",
+                "Var            : Token name, Expr initializer"
         ));
         defineAst(outputDirectory, "Expr", subclassesDescription);
     }
@@ -59,7 +61,7 @@ public class GenerateAST {
 
         // The base accept() method.
         writer.println();
-        writer.println("public  abstract <R> R accept(Visitor<R> visitor);");
+        writer.println("    public  abstract <R> R accept(Visitor<R> visitor);");
 
         writer.println("}");
         writer.close();
@@ -67,46 +69,46 @@ public class GenerateAST {
 
     private static void defineVisitor(
             PrintWriter writer, String baseName, List<String> types) {
-        writer.println("public  interface Visitor<R> {");
+        writer.println("    public interface Visitor<R> {");
 
         for (String type : types) {
             String typeName = type.split(":")[0].trim();
-            writer.printf("    R visit%s%s(%s %s);%n", typeName, baseName, typeName, baseName.toLowerCase());
+            writer.printf("        R visit%s%s(%s %s);%n", typeName, baseName, typeName, baseName.toLowerCase());
         }
 
-        writer.println("  }");
+        writer.println("    }");
     }
 
     private static void defineType(
             PrintWriter writer, String baseName,
             String className, String fieldList) {
-        writer.printf("public  static class %s extends %s {%n", className, baseName);
+        writer.printf("    public  static class %s extends %s {%n", className, baseName);
 
         // Constructor.
-        writer.printf("public    %s(%s) {%n", className, fieldList);
+        writer.printf("        public %s(%s) {%n", className, fieldList);
 
         // Store parameters in fields.
         String[] fields = fieldList.split(", ");
         for (String field : fields) {
             String name = field.split(" ")[1];
-            writer.printf("      this.%s = %s;%n", name, name);
+            writer.printf("            this.%s = %s;%n", name, name);
         }
 
-        writer.println("    }");
+        writer.println("        }");
 
         // Visitor pattern.
         writer.println();
-        writer.println("    @Override");
-        writer.println("    public <R> R accept(Visitor<R> visitor) {");
-        writer.printf("         return visitor.visit%s%s(this);%n", className, baseName);
-        writer.println("    }");
+        writer.println("        @Override");
+        writer.println("        public <R> R accept(Visitor<R> visitor) {");
+        writer.printf("             return visitor.visit%s%s(this);%n", className, baseName);
+        writer.println("        }");
 
         // Fields.
         writer.println();
         for (String field : fields) {
-            writer.printf("    public final %s;%n", field);
+            writer.printf("        public final %s;%n", field);
         }
 
-        writer.println("  }");
+        writer.println("    }");
     }
 }

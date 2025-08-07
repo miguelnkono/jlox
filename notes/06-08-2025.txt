@@ -20,3 +20,15 @@ Here are the new rules:
     statement           -> exprStmt | printStmt ;
     exprStmt            -> expression ";" ;
     printStmt           -> "print" expression ";" ;
+
+Grammar after adding support for 'assignment':
+    program             -> declaration* EOF ;
+    declaration         -> varDecl | statement ;
+    varDecl             -> "var" IDENTIFIER ("=" expression )? ";" ;
+    statement           -> exprStmt | printStmt ;
+
+And to access a variable, we need to update the 'primary rule':
+    primary             -> "true" | "false" | "nil"
+                            | NUMBER | STRING
+                            "(" expression ")"
+                            | IDENTIFIER ;

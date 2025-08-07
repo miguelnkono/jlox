@@ -10,6 +10,7 @@ import scanner.Token;
 import lox.Main;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
@@ -126,6 +127,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		return null;
 	}
 
+	@Override
+	public Object visitVariableExpr(Expr.Variable expr) {
+		return null;
+	}
+
 	// function to return a runtime error
 	private void checkNumberOperand(Token operator, Object operand) {
 		if (operand instanceof Double) return;
@@ -149,9 +155,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
 	// function to check the equality of two values.
 	private Boolean isEqual(Object left, Object right) {
-		if (left == null && right == null) return true;
-		if (left == null) return false;
-		return true;
+//		if (left == right) return true;
+//		if (left == null | right == null) return false;
+//		return left.equals(right);
+		// shorter way.
+		return Objects.equals(left, right);
 	}
 
 	@Override
@@ -164,6 +172,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 	public Void visitPrintStmt(Stmt.Print stmt) {
 		Object evaluated = evaluate(stmt.expression);
 		System.out.println(stringify(evaluated));
+		return null;
+	}
+
+	@Override
+	public Void visitVarStmt(Stmt.Var stmt) {
 		return null;
 	}
 }

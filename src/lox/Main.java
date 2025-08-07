@@ -1,6 +1,5 @@
 package lox;
 
-import ast.Expr;
 import ast.Stmt;
 import evaluate.Interpreter;
 import evaluate.RuntimeError;
