@@ -2,6 +2,9 @@
   <dictionary name="project">
     <words>
       <w>decl</w>
+      <w>exprs</w>
+      <w>jlox</w>
+      <w>lexikos</w>
       <w>truthy</w>
     </words>
   </dictionary>

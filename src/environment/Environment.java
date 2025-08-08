@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class Environment {
-    private Environment enclosing;  // most outer environment.
+    private final Environment enclosing;  // most outer environment.
     private final Map<String, Object> values = new HashMap<>();
 
     // this constructor will create an outer scope. It's used for global scope.

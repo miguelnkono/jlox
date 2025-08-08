@@ -183,7 +183,7 @@ public class Scanner {
 
             do advance();
             while (isDigit(peek()));
-        };
+        }
 
         double number = Double.parseDouble(source.substring(start, current));
         addToken(NUMBER, number);

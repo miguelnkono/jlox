@@ -2,8 +2,6 @@ package ast;
 
 import scanner.Token;
 
-import java.util.List;
-
 public abstract class Expr {
     public interface Visitor<R> {
         R visitAssignExpr(Assign expr);

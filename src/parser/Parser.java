@@ -57,7 +57,9 @@ public class Parser {
         if (match(PRINT)){
             return printStatement();
         }
-        if (match(LEFT_BRACE)) return new Stmt.Block(block());
+        if (match(LEFT_BRACE)) {
+            return new Stmt.Block(block());
+        }
 
         return expressionStatement();
     }
@@ -89,7 +91,6 @@ public class Parser {
 
     // parse the expression rule.
     private Expr expression() {
-        //return equality();
         return assignment();
     }
 
@@ -202,7 +203,6 @@ public class Parser {
         throw error(peek(), s);
     }
 
-    @SuppressWarnings({ "unused", "incomplete-switch" })
     private void synchronize() {
         advance();
 

@@ -12,11 +12,11 @@ When evaluating, we need answers for these two questions:
 	* how are we going to organize the code that is going to evaluate the syntax tree?
 
 For this implementation of the Lox language, we are going to use the 'java.lang.Object' class
-to hold the value and the type of a variable in Jlox(which is the implementation of the Lox language in Java).
+to hold the value and the type of variable in Jlox(which is the implementation of the Lox language in Java).
 
 		Lox type				Java representation
 		Any lox value			Object
-		nil						nil
+		nil						nul
 		number					Double
 		boolean 				Boolean
 		string 					String

@@ -55,7 +55,6 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		return value;
 	}
 
-	@SuppressWarnings("incomplete-switch")
 	@Override
 	public Object visitBinaryExpr(Binary expr) {
 		// [left-token operator right-token]
@@ -78,7 +77,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 					return (double) leftValue + (double) rightValue;
 				// concatenating two strings together.
 				if (leftValue instanceof String && rightValue instanceof String)
-					return (String) leftValue + (String) rightValue;
+					return leftValue + (String) rightValue;
 				// if neither of the two operands are numbers or strings we raise a runtime error.
 				throw new RuntimeError(expr.operator, "Operands must be two numbers or strings.");
             case GREATER:
@@ -124,17 +123,18 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		// we evaluate the right operant first.
 		var right = evaluate(expr.right);
 
-		switch (expr.operator.type()) {
-			case MINUS:
-				checkNumberOperand(expr.operator, right);
-				return -(double) right;
-			case BANG:
-				return !isTruthy(right);
-		}
+        return switch (expr.operator.type()) {
+            case MINUS -> {
+                checkNumberOperand(expr.operator, right);
+                yield -(double) right;
+            }
+            case BANG -> !isTruthy(right);
+            default ->
+                // this code is unreachable.
+                    null;
+        };
 
-		// this code is unreachable.
-		return null;
-	}
+    }
 
 	@Override
 	public Object visitVariableExpr(Expr.Variable expr) {
