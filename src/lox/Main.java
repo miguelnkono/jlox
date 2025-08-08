@@ -90,7 +90,7 @@ public class Main {
     * this function report information to the user.
     * */
     private static void report(int line, String where, String message) {
-        System.err.printf("[Line %d] Error %s: %s%n", line, where, message);
+        System.err.printf("[Line " + line + "] Error " + where + ": " + message);
         hadError = true;
     }
 
