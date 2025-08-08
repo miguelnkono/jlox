@@ -57,8 +57,20 @@ public class Parser {
         if (match(PRINT)){
             return printStatement();
         }
+        if (match(LEFT_BRACE)) return new Stmt.Block(block());
 
         return expressionStatement();
+    }
+
+    private List<Stmt> block() {
+        List<Stmt> statements = new ArrayList<>();
+
+        while (!check(RIGHT_BRACE) && !isAtEnd()) {
+            statements.add(declaration());
+        }
+
+        consume(RIGHT_BRACE, "Expect '}' after the block.");
+        return statements;
     }
 
     // parse an expressionStatement node.
@@ -77,7 +89,28 @@ public class Parser {
 
     // parse the expression rule.
     private Expr expression() {
-        return equality();
+        //return equality();
+        return assignment();
+    }
+
+    private Expr assignment() {
+        // first we parse the left side of the assignment expression.
+        Expr expr = equality();
+
+        // we look to see if there is an equal sign.
+        if (match(EQUAL)) {
+            Token equals = previous();  // we get the equal sign.
+            Expr value = assignment();  // we parse the right hand side of the assignment.
+
+            if (expr instanceof Expr.Variable) {
+                Token name = ((Expr.Variable) expr).name;
+                return new Expr.Assign(name, value);
+            }
+
+            error(equals, "Invalid assignment target.");
+        }
+
+        return expr;
     }
 
     // parse the equality rule.
@@ -154,7 +187,7 @@ public class Parser {
             return new Expr.Grouping(expr);
         }
 
-        if (match(VAR)) {
+        if (match(IDENTIFIER)) {
             return new Expr.Variable(previous());
         }
 

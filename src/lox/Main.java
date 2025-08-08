@@ -82,6 +82,7 @@ public class Main {
             String line = reader.readLine();
             // exit the program
             if (line.startsWith(".exit")) {
+                System.out.println("Goodbye!");
                 break;
             }
             // here we execute the interpreter with the line string as input.
@@ -109,7 +110,7 @@ public class Main {
         if (token.type() == TokenType.EOF) {
             report(token.line(), " at end", message);
         } else {
-            report(token.line(), " at '" + token.lexeme + "'", message);
+            report(token.line(), " at '" + token.lexeme() + "'", message);
         }
     }
 

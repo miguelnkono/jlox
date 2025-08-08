@@ -6,6 +6,7 @@ import ast.Expr.Grouping;
 import ast.Expr.Literal;
 import ast.Expr.Unary;
 import ast.Stmt;
+import environment.Environment;
 import scanner.Token;
 import lox.Main;
 
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
+
+	private Environment environment = new Environment();
 
 	/*
 	* Function to interpret the ast.
@@ -43,6 +46,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		}
 
 		return object.toString();
+	}
+
+	@Override
+	public Object visitAssignExpr(Expr.Assign expr) {
+		Object value = evaluate(expr.value);
+		environment.assign(expr.name, value);
+		return value;
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -109,7 +119,6 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		return expr.value;
 	}
 
-	@SuppressWarnings("incomplete-switch")
 	@Override
 	public Object visitUnaryExpr(Unary expr) {
 		// we evaluate the right operant first.
@@ -129,7 +138,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
 	@Override
 	public Object visitVariableExpr(Expr.Variable expr) {
-		return null;
+		return environment.get(expr.name);
 	}
 
 	// function to return a runtime error
@@ -163,6 +172,26 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 	}
 
 	@Override
+	public Void visitBlockStmt(Stmt.Block stmt) {
+		executeBlock(stmt.statements, new Environment(environment));
+		return null;
+	}
+
+	private void executeBlock(List<Stmt> statements, Environment environment) {
+		Environment previous = this.environment;	// the outer scope.
+		try {
+			this.environment = environment;	// we shadow the outer variables.
+
+			for (Stmt stmt : statements) {
+				execute(stmt);
+			}
+		} finally {
+			// we returned to the outer scope.
+			this.environment = previous;
+		}
+	}
+
+	@Override
 	public Void visitExpressionStmt(Stmt.Expression stmt) {
 		evaluate(stmt.expression);
 		return null;
@@ -177,6 +206,12 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
 	@Override
 	public Void visitVarStmt(Stmt.Var stmt) {
+		Object value = null;
+		if (stmt.initializer != null) {
+			value = evaluate(stmt.initializer);
+		}
+
+		environment.define(stmt.name.lexeme, value);
 		return null;
 	}
 }

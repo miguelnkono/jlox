@@ -1,0 +1,26 @@
+        - Environment
+It is like a map where the keys are the variable and the value are the variable's value.
+
+I just discovered that maps were primarily called 'scatter tables'.
+
+                    expression     → assignment ;
+                    assignment     → IDENTIFIER "=" assignment
+                                   | equality ;
+
+
+        - Scope
+A scope define a region where a variable maps to a certain entity. Multiple scopes enable the same name to refer to
+different things in different context.
+
+JLox is statically scope.
+“Lexical” comes from the Greek “lexikos” which means “related to words”. When we use it in programming languages,
+it usually means a thing you can figure out from source code itself without having to execute anything.
+
+In a C-ish syntax like Lox’s, scope is controlled by curly-braced blocks. (That’s why we call it block scope.)
+
+this is the new grammar with the block scope supported:
+        statement      → exprStmt
+                       | printStmt
+                       | block ;
+
+        block          → "{" declaration* "}" ;

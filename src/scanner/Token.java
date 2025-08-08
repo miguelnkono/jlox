@@ -13,6 +13,8 @@ public class Token {
         this.tokenLine = tokenLine;
     }
 
+    public String lexeme() { return lexeme; }
+
     public TokenType type() {
         return tokenType;
     }
