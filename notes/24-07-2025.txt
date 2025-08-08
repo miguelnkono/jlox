@@ -1,6 +1,6 @@
 This is JLox, a subset of the Lox programming language implemented in Java,
  the programming language that I am going to programme to learn how
-compiler and interpreter are made.
+compiler and scanner are made.
 
 I am Nkono Ndeme Miguel, an engineer at IAI-Cameroon doing System stuff.
 

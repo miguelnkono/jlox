@@ -1,0 +1,34 @@
+        `All my live, my heard has been yearned for a thing I cannot name`
+                - André Breton, Mad Love
+- An 'expression' is a piece of code that 'evaluate' to a value.
+- A 'statement' is a complete portion of code that 'performs' an action.
+
+An 'expression statement' is when we use an expression to create a statement. It's like when we call a function in C and pass its result to a variable. There
+we are creating an expression statement. Example: int foo = Foo(); This is an expression statement.
+
+Actual grammar:
+        expression     → equality ;
+        equality       → comparison ( ( "==" | "!=" ) comparison )* ;
+        comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+        term           → factor ( ( "+" | "-" ) factor )* ;
+        factor         → unary ( ( "/" | "*" ) unary )* ;
+        unary          → ( "-" | "!" ) unary | primary ;
+        primary        → NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
+
+Here are the new rules:
+    program             -> statement* EOF ;
+    statement           -> exprStmt | printStmt ;
+    exprStmt            -> expression ";" ;
+    printStmt           -> "print" expression ";" ;
+
+Grammar after adding support for 'assignment':
+    program             -> declaration* EOF ;
+    declaration         -> varDecl | statement ;
+    varDecl             -> "var" IDENTIFIER ("=" expression )? ";" ;
+    statement           -> exprStmt | printStmt ;
+
+And to access a variable, we need to update the 'primary rule':
+    primary             -> "true" | "false" | "nil"
+                            | NUMBER | STRING
+                            "(" expression ")"
+                            | IDENTIFIER ;

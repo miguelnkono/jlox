@@ -1,8 +1,8 @@
 package tools;
 
 import ast.Expr;
-import interpreter.Token;
-import interpreter.TokenType;
+import scanner.Token;
+import scanner.TokenType;
 
 public class AstPrinter implements Expr.Visitor<String> {
     public String print(Expr expr) {
@@ -28,6 +28,11 @@ public class AstPrinter implements Expr.Visitor<String> {
     @Override
     public String visitUnaryExpr(Expr.Unary expr) {
         return parenthesize(expr.operator.lexeme, expr.right);
+    }
+
+    @Override
+    public String visitVariableExpr(Expr.Variable expr) {
+        return "";
     }
 
     private String parenthesize(String name, Expr ... exprs) {

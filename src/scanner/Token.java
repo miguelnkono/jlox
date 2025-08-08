@@ -1,4 +1,4 @@
-package interpreter;
+package scanner;
 
 public class Token {
     public final String lexeme;

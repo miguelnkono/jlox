@@ -1,13 +1,15 @@
 package parser;
 
 import ast.Expr;
-import interpreter.Token;
-import interpreter.TokenType;
+import ast.Stmt;
+import scanner.Token;
+import scanner.TokenType;
 import lox.Main;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static interpreter.TokenType.*;
+import static scanner.TokenType.*;
 
 public class Parser {
     private final List<Token> tokens;   // this is the list of tokens to parse. Also known as the 'letters' in the alphabet.
@@ -18,12 +20,59 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    public Expr parse() {
+    public List<Stmt> parse() {
+        List<Stmt> stmtList = new ArrayList<>();
+        while (!isAtEnd()) {
+            stmtList.add(declaration());
+        }
+        
+        return stmtList;
+    }
+
+    private Stmt declaration() {
         try {
-            return expression();
+            if (match(VAR)) return varDeclaration();
+
+            return statement();
         } catch (ParseError error) {
+            synchronize();
             return null;
         }
+    }
+
+    private Stmt varDeclaration() {
+        Token name = consume(IDENTIFIER, "Expect variable name");
+
+        Expr initial = null;
+        if (match(EQUAL)) {
+            initial = expression();
+        }
+
+        consume(SEMICOLON, "Expect ';' after variable declaration.");
+        return new Stmt.Var(name, initial);
+    }
+
+    // parse the program from the very beginning of the script.
+    private Stmt statement() {
+        if (match(PRINT)){
+            return printStatement();
+        }
+
+        return expressionStatement();
+    }
+
+    // parse an expressionStatement node.
+    private Stmt expressionStatement() {
+        Expr value = expression();
+        consume(SEMICOLON, "Except ';' after the value.");
+        return new Stmt.Expression(value);
+    }
+
+    // parse print statements.
+    private Stmt printStatement() {
+        Expr value = expression();
+        consume(SEMICOLON, "Except ';' after the value");
+        return new Stmt.Print(value);
     }
 
     // parse the expression rule.
@@ -105,15 +154,22 @@ public class Parser {
             return new Expr.Grouping(expr);
         }
 
+        if (match(VAR)) {
+            return new Expr.Variable(previous());
+        }
+
         throw error(peek(), "Expect expression.");
     }
 
     private Token consume(TokenType tokenType, String s) {
-        if (check(tokenType)) advance();
+        if (check(tokenType)) {
+            return advance();
+        }
 
         throw error(peek(), s);
     }
 
+    @SuppressWarnings({ "unused", "incomplete-switch" })
     private void synchronize() {
         advance();
 

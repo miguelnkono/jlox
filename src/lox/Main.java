@@ -1,12 +1,12 @@
 package lox;
 
-import ast.Expr;
-import interpreter.Scanner;
-import interpreter.Token;
-import interpreter.TokenType;
+import ast.Stmt;
+import evaluate.Interpreter;
+import evaluate.RuntimeError;
+import scanner.Scanner;
+import scanner.Token;
+import scanner.TokenType;
 import parser.Parser;
-import tools.AstPrinter;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,7 +16,9 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class Main {
-    private static boolean hadError;
+    private static final Interpreter INTERPRETER = new Interpreter();
+    private static boolean hadError = false;
+    private static boolean hadRuntimeError = false;
 
     public static void main(String[] args) throws IOException {
         // here we access the length of the command line arguments, and we branch on the
@@ -44,12 +46,12 @@ public class Main {
         List<Token> tokens = scanner.scanTokens();
 
         Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
+        List<Stmt> statements = parser.parse();
 
         // stop if there is an error in the parsing.
         if (hadError) return;
 
-        System.out.println(new AstPrinter().print(expression));
+        INTERPRETER.interpret(statements);
     }
 
     /*
@@ -62,6 +64,7 @@ public class Main {
 
         // if an error occurs.
         if (hadError) System.exit(65);
+        if (hadRuntimeError) System.exit(70);
     }
 
     /*
@@ -77,6 +80,7 @@ public class Main {
             System.out.print("> ");
             // we read the inputs, and we pass it to the interpreter.
             String line = reader.readLine();
+            // exit the program
             if (line.startsWith(".exit")) {
                 break;
             }
@@ -107,5 +111,13 @@ public class Main {
         } else {
             report(token.line(), " at '" + token.lexeme + "'", message);
         }
+    }
+
+    /*
+    * this function report a runtime error to the user.
+    * */
+    public static void runtimeError(RuntimeError error) {
+        System.err.printf("%s\n[line %d]%n", error.getMessage(), error.token().line());
+        hadRuntimeError = true;
     }
 }

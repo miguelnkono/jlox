@@ -1,7 +1,7 @@
                 The expression problem
 
 The expression problem is when we try to find the best way to add types and operations to a system easily.
-To overcome this problem, we will use in our interpreter the 'Visitor pattern' design pattern.
+To overcome this problem, we will use in our scanner the 'Visitor pattern' design pattern.
 
                 Visitor pattern
 
