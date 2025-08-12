@@ -25,6 +25,7 @@ public class GenerateAST {
                 "Binary         : Expr left, Token operator, Expr right",
                 "Grouping       : Expr expression",
                 "Literal        : Object value",
+                "Logical        : Expr left, Token operator, Expr right",
                 "Unary          : Token operator, Expr right",
                 "Variable       : Token name"
         );
@@ -32,6 +33,7 @@ public class GenerateAST {
         defineAst(outputDirectory, "Stmt", Arrays.asList(
                 "Block          : List<Stmt> statements",
                 "Expression     : Expr expression",
+                "If             : Expr condition, Stmt thenBranch, Stmt elseBranch",
                 "Print          : Expr expression",
                 "Var            : Token name, Expr initializer"
         ));
@@ -49,6 +51,7 @@ public class GenerateAST {
         writer.println("package ast;");
         writer.println();
         writer.println("import java.util.List;");
+        writer.println("import scanner.Token;");
         writer.println();
         writer.printf("public abstract class %s {%n", baseName);
 

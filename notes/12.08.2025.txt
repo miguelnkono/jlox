@@ -1,0 +1,29 @@
+        `Logic, like whiskey loses its beneficial effect when taken in too large quantities.`
+                - Edward John Moreton Drax Plunkett, Lord Dunsany.
+
+Control can be divided into two kings:
+    * conditional or branching control flow: it is used to 'not' executes a piece of more than once.
+    * looping conditional: it is used to execute a piece code more than once, it 'jumps' back so we can execute the code one more time.
+
+    1 - Conditional or branching control flow:
+    ----------------------------------------------
+Branching control flow comes in two flavors:
+    * 'if-statement' which lets you conditionally executes statements.
+    * 'conditional operator(?:)' which lets you executes conditionally expressions. (for simplicity's sake, Lox does not support this)
+
+Adding the 'if-statement' and our grammar looks like this:
+    statement       -> exprStmt
+                        | printStmt
+                        | ifStmt
+                        | block ;
+    ifStmt          -> "if" "(" expression ")" statement ( "else" statement )? ;
+
+When parsing an if-statement, there is a problem that occurs: the 'dangling else' problem, which is problem related to the
+else statement being preceded by multiple if statements.
+
+Adding support for the logical 'and' and 'or' operator and our grammar looks like this:
+    expression          -> assignment ;
+    assignment          -> IDENTIFIER "=" assignment | logical_or ;
+    logical_or          -> logic_and ( "or" logical_and)* ;
+    logic_and           -> equality ( "and" equality)* ;
+

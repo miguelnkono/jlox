@@ -61,7 +61,23 @@ public class Parser {
             return new Stmt.Block(block());
         }
 
+        if (match(IF)) return ifStatement();
+
         return expressionStatement();
+    }
+
+    private Stmt ifStatement() {
+        // if (condition) { stmt } else { stmt }
+        consume(LEFT_PAREN, "Expect '(' after if.");
+        Expr condition = expression();
+        consume(RIGHT_PAREN, "Expect ')' after the condition expression.");
+
+        Stmt thenStmt = statement();
+        Stmt elseStmt = null;
+        if (match(ELSE)) {
+            elseStmt = statement();
+        }
+        return new Stmt.If(condition, thenStmt, elseStmt);
     }
 
     private List<Stmt> block() {
@@ -96,7 +112,8 @@ public class Parser {
 
     private Expr assignment() {
         // first we parse the left side of the assignment expression.
-        Expr expr = equality();
+        // Expr expr = equality();
+        Expr expr = or();
 
         // we look to see if there is an equal sign.
         if (match(EQUAL)) {
@@ -111,6 +128,30 @@ public class Parser {
             error(equals, "Invalid assignment target.");
         }
 
+        return expr;
+    }
+
+    // parse the or logical operator.
+    private Expr or() {
+        Expr expr = and();
+
+        while (match(OR)) {
+            Token previous = previous();
+            Expr right = and();
+            expr = new Expr.Logical(expr, previous, right);
+        }
+        return expr;
+    }
+
+    // parse the and logical operator.
+    private Expr and() {
+        Expr expr = equality();
+
+        while (match(AND)) {
+            Token previous = previous();
+            Expr right = equality();
+            expr = new Expr.Logical(expr, previous, right);
+        }
         return expr;
     }
 
