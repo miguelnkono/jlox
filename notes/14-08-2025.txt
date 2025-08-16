@@ -1,0 +1,11 @@
+    Adding support for the while loop in jlox
+   -------------------------------------------
+
+    statement       -> exprStmt |
+                        printStmt |
+                        ifStmt |
+                        whileStmt |
+                        forStmt |
+                        block ;
+    whileStmt       -> "while" "(" expression ")" statement ;
+    forStmt         -> "for" "(" ( varDecl | exprStmt | ";" ) expression ? ";" expression? ")" statement ;

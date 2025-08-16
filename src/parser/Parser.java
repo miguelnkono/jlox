@@ -8,6 +8,7 @@ import lox.Main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 import static scanner.TokenType.*;
 
@@ -61,9 +62,83 @@ public class Parser {
             return new Stmt.Block(block());
         }
 
+        if (match(BREAK)) return breakStatement();
+
+        // matching an if statement.
         if (match(IF)) return ifStatement();
 
+        // matching a while loop.
+        if (match(WHILE)) return whileStatement();
+
+        // matching a for loop.
+        if (match(FOR)) return forStatement();
+
         return expressionStatement();
+    }
+
+    private Stmt breakStatement() {
+        consume(SEMICOLON, "Expect ';' after the break keyword.");
+        return null;
+    }
+
+    private Stmt forStatement() {
+        consume(LEFT_PAREN, "Expect '(' after the 'for'.");
+
+        // parsing the initializer.
+        Stmt initializer;
+        if (match(SEMICOLON)) {
+            // if we encounter a semicolon in the initializer we set it to null.
+            initializer = null;
+        } else if (match(VAR)) {
+            // if we encounter a variable declaration, we create it and it is scope to the for loop.
+            initializer = varDeclaration();
+        } else {
+            // if we encounter an expression in the initializer, we parse it.
+            initializer = expressionStatement();
+        }
+
+        // parsing the conditional part of the for loop.
+        Expr condition = null;
+        if (!check(SEMICOLON)) {
+            // if the condition is not semicolon then we can parse it. But if it, then we simply ignores it.
+            condition = expression();
+        }
+        consume(SEMICOLON, "Expect ';' after the loop condition");
+
+        // parsing the increment part of the for loop.
+        Expr increment = null;
+        if (!check(SEMICOLON)) {
+            increment = expression();
+        }
+        consume(RIGHT_PAREN, "Expect ')' after the for clause.");
+
+        // parsing the body of the for loop.
+        Stmt body = statement();
+
+        if (increment != null) {
+            body = new Stmt.Block(
+                    Arrays.asList(body, new Stmt.Expression(increment))
+            );
+        }
+
+        if (condition == null) condition = new Expr.Literal(true);
+        body = new Stmt.While(condition, body);
+
+        if (initializer != null) {
+            body = new Stmt.Block(
+                    Arrays.asList(initializer, body)
+            );
+        }
+
+        return body;
+    }
+
+    private Stmt whileStatement() {
+        consume(LEFT_PAREN, "Expect a left parentheses after the while keyword.");
+        Expr condition = expression();
+        consume(RIGHT_PAREN, "Expected a right parentheses after the condition.");
+        Stmt body = statement();
+        return new Stmt.While(condition, body);
     }
 
     private Stmt ifStatement() {
