@@ -286,7 +286,48 @@ public class Parser {
             return new Expr.Unary(operator, right);
         }
 
-        return primary();
+//        return primary();
+        return call();
+    }
+
+    // parse a function call.
+    private Expr call() {
+        Expr expr = primary();
+
+        while (true) {
+            if (match(LEFT_PAREN)) {
+                // if we match a left parentheses we call finishCall to parse the previous expression, to return result 
+                // is then the new expression, and we loop over if we match another left parentheses.
+                expr = finishCall(expr);
+            } else {
+                break;
+            }
+        }
+
+        return expr;
+    }
+
+    // parse the callee.
+    private Expr finishCall(Expr callee) {
+        // foo(2, 2)
+        //    ^
+        List<Expr> arguments = new ArrayList<>();
+        if (!check(RIGHT_PAREN)) {
+            do {
+                // maximum arguments size.
+                if (arguments.size() > 255) {
+                    error(peek(), "Can't have more than 255 arguments.");
+                }
+
+                // parse all the expression in the arguments.
+                arguments.add(expression());
+            } while (match(COMMA));
+        }
+
+        // we store the result of consuming the right parentheses so if it is not there we raise an error;
+        Token paren = consume(RIGHT_PAREN, "Expect ')' after the arguments.");
+
+        return new Expr.Call(callee, paren, arguments);
     }
 
     private Expr primary() {

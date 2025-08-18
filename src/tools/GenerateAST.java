@@ -23,6 +23,7 @@ public class GenerateAST {
         List<String> subclassesDescription = Arrays.asList(
                 "Assign         : Token name, Expr value",
                 "Binary         : Expr left, Token operator, Expr right",
+                "Call           : Expr left, Token operator, List<Expr> arguments",
                 "Grouping       : Expr expression",
                 "Literal        : Object value",
                 "Logical        : Expr left, Token operator, Expr right",
