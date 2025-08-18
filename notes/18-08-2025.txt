@@ -1,0 +1,1 @@
+In this section we are going to look at how to add support to function in our Jlox implementation of the language Lox.
