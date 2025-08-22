@@ -118,7 +118,7 @@ public class Main {
     * this function report a runtime error to the user.
     * */
     public static void runtimeError(RuntimeError error) {
-        System.err.printf("%s\n[line %d]%d\n", error.getMessage(), error.token().line());
+        System.err.printf("%s at: [line %d]\n", error.getMessage(), error.token().line());
         hadRuntimeError = true;
     }
 }

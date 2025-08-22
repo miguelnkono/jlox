@@ -32,6 +32,7 @@ public class Parser {
 
     private Stmt declaration() {
         try {
+            if (match(FUN)) return function("function");    // if we match the FUN token we branch to the function parsing.
             if (match(VAR)) return varDeclaration();
 
             return statement();
@@ -39,6 +40,34 @@ public class Parser {
             synchronize();
             return null;
         }
+    }
+
+    /*
+    * Here we are going to parse a function.
+    * The kind variable is used to indicate to the user that we were waiting for a 'kind' of lox callable identifier but got
+    * another thing.
+    * */
+    private Stmt function(String kind) {
+        // we try to get the name of the function.
+        Token functionName = consume(IDENTIFIER, "Expect a %s name".formatted(kind));
+
+        consume(LEFT_PAREN, "Expect '(' after %s name".formatted(kind));
+        List<Token> parameters = new ArrayList<>();
+        if (!match(RIGHT_PAREN)) {
+            do {
+                if (parameters.size() > 225) {
+                    error(peek(), "Can't have more than 255 parameters");
+                }
+
+                parameters.add(consume(IDENTIFIER, "Expect parameter name"));
+            } while (match(COMMA));
+        }
+
+        // here we parse the function body
+        consume(LEFT_BRACE, "Expect '{' after %s name".formatted(kind));
+        List<Stmt> body = block();
+
+        return new Stmt.Function(functionName, parameters, body);
     }
 
     private Stmt varDeclaration() {
@@ -286,35 +315,44 @@ public class Parser {
             return new Expr.Unary(operator, right);
         }
 
-//        return primary();
-        return call();
+        return call();      // we jump to the call rule in the grammar.
     }
 
     // parse a function call.
     private Expr call() {
+        // first we parse the expression that precede the parentheses in the function call.
         Expr expr = primary();
 
+        // we try to parse all the calls.
+        // if we find a left parentheses then we parse it otherwise we terminate.
         while (true) {
             if (match(LEFT_PAREN)) {
                 // if we match a left parentheses we call finishCall to parse the previous expression, to return result 
                 // is then the new expression, and we loop over if we match another left parentheses.
+                // the finishCall takes the previous expr variable and produces the new one.
                 expr = finishCall(expr);
             } else {
+                // if we don't find a left parentheses then we no longer have a function call or the didn't even had one
+                // at the first place.
                 break;
             }
         }
 
+        // we return the function parse or the primary rule expression parsed earlier.
         return expr;
     }
 
     // parse the callee.
+    // here we parse the arguments of the function and try to find the right parentheses that will terminate the function
+    // call. All the arguments are separated by a comma.
     private Expr finishCall(Expr callee) {
         // foo(2, 2)
         //    ^
-        List<Expr> arguments = new ArrayList<>();
-        if (!check(RIGHT_PAREN)) {
+        List<Expr> arguments = new ArrayList<>();   // our arguments' expression list.
+        if (!check(RIGHT_PAREN)) {  // this checks for the zero-argument case.
+            // until we hit a right parentheses we keep parsing the arguments.
             do {
-                // maximum arguments size.
+                // maximum arguments size that we allow in our implementation of the language.
                 if (arguments.size() > 255) {
                     error(peek(), "Can't have more than 255 arguments.");
                 }
@@ -325,8 +363,11 @@ public class Parser {
         }
 
         // we store the result of consuming the right parentheses so if it is not there we raise an error;
+        // so the only purpose of storing the right parentheses is to raise an error if the parser could not properly
+        // parse the function call's arguments.
         Token paren = consume(RIGHT_PAREN, "Expect ')' after the arguments.");
 
+        // then we return a new call node.
         return new Expr.Call(callee, paren, arguments);
     }
 

@@ -20,10 +20,14 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 	private Environment global = new Environment();	// this is for the outermost global scope.
 	private Environment environment = global;
 
+	public Environment global() { return this.global; }	// returns the global scope of the interpreter.
+
+	// when constructing the interpreter we load all the built-in functions and methods in the interpreter.
 	public Interpreter() {
 		// this is the native function to Jlox to get the current time.
-		global.define("clock", new LoxCallable() {
+		LoxCallable clockValue = new LoxCallable() {
 
+			// the arity of the clock function is zero meaning that the clock function don't take any arguments.
 			@Override
 			public int arity() {
 				return 0;
@@ -31,14 +35,16 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
 			@Override
 			public Object call(Interpreter interpreter, List<Object> arguments) {
+				// returns the current time in milliseconds.
 				return (double) System.currentTimeMillis() / 1000.0;
 			}
 
 			@Override
 			public String toString() {
-				return "<native fn>";
+				return "<native fn mate to compute the current time>";
 			}
-		});
+		};
+		global.define("clock", clockValue);
 	}
 
 	/*
@@ -136,11 +142,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
 	@Override
 	public Object visitCallExpr(Expr.Call expr) {
-		// evaluate function calls.
+		// evaluate the callee.
+		// The callee will typically be a string.
 		Object callee = evaluate(expr.left);
 
 		List<Object> arguments = new ArrayList<>();
 		for (Expr argument : expr.arguments) {
+			// then we evaluate our arguments if there is any.
 			arguments.add(evaluate(argument));
 		}
 
@@ -149,6 +157,9 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 			throw new RuntimeError(expr.operator, "Can only call functions and classes.");
 		}
 
+		// it is possible to cast the callee to a LoxCallable because every java classes implement the Object class and the
+		// callee is of type Object making it kinda generic in the sens that it can be down-cast to any class, in our case
+		// it can be down-cast to any LoxCallable implementation classes.
 		LoxCallable function = (LoxCallable) callee;
 		// check the arity of the function.
 		if ((arguments.size() != function.arity())) {
@@ -244,7 +255,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		return null;
 	}
 
-	private void executeBlock(List<Stmt> statements, Environment environment) {
+	public void executeBlock(List<Stmt> statements, Environment environment) {
 		Environment previous = this.environment;	// the outer scope.
 		try {
 			this.environment = environment;	// we shadow the outer variables.
