@@ -6,6 +6,8 @@ import ast.Expr.Grouping;
 import ast.Expr.Literal;
 import ast.Expr.Unary;
 import ast.Stmt;
+import built_in.LoxFunction;
+import built_in.Return;
 import environment.Environment;
 import scanner.Token;
 import lox.Main;
@@ -276,6 +278,14 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 	}
 
 	@Override
+	public Void visitFunctionStmt(Stmt.Function stmt) {
+		LoxFunction function = new LoxFunction(stmt, environment);
+		// define the function in the environment and bind it to its return value
+		environment.define(stmt.name.lexeme(), function);
+		return null;
+	}
+
+	@Override
 	public Void visitIfStmt(Stmt.If stmt) {
 		Object condition = evaluate(stmt.condition);
 		if (isTruthy(condition)) {
@@ -291,6 +301,16 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		Object evaluated = evaluate(stmt.expression);
 		System.out.println(stringify(evaluated));
 		return null;
+	}
+
+	@Override
+	public Void visitReturnStmt(Stmt.Return stmt) {
+		Object value = null;
+		if (stmt.value != null)
+			value = evaluate(stmt.value);
+
+		// this will raise an exception to return from the function context to the outer context.
+		throw new Return(value);
 	}
 
 	@Override

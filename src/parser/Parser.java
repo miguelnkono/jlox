@@ -2,6 +2,7 @@ package parser;
 
 import ast.Expr;
 import ast.Stmt;
+import evaluate.LoxCallable;
 import scanner.Token;
 import scanner.TokenType;
 import lox.Main;
@@ -49,7 +50,11 @@ public class Parser {
     * */
     private Stmt function(String kind) {
         // we try to get the name of the function.
-        Token functionName = consume(IDENTIFIER, "Expect a %s name".formatted(kind));
+        /* Token functionName = consume(IDENTIFIER, "Expect a %s name".formatted(kind)); */
+        Token functionName = null;
+        if (check(IDENTIFIER)) {
+            functionName = consume(IDENTIFIER, "Expect a %s name after the fun keyword".formatted(kind));
+        }
 
         consume(LEFT_PAREN, "Expect '(' after %s name".formatted(kind));
         List<Token> parameters = new ArrayList<>();
@@ -61,10 +66,11 @@ public class Parser {
 
                 parameters.add(consume(IDENTIFIER, "Expect parameter name"));
             } while (match(COMMA));
+            consume(RIGHT_PAREN, "Expect ')' after parameters.");
         }
 
         // here we parse the function body
-        consume(LEFT_BRACE, "Expect '{' after %s name".formatted(kind));
+        consume(LEFT_BRACE, "Expect '{' after %s body".formatted(kind));
         List<Stmt> body = block();
 
         return new Stmt.Function(functionName, parameters, body);
@@ -102,7 +108,24 @@ public class Parser {
         // matching a for loop.
         if (match(FOR)) return forStatement();
 
+        // matching a return statement.
+        if (match(RETURN)) return returnStatement();
+
         return expressionStatement();
+    }
+
+    private Stmt returnStatement() {
+        // get the return keyword.
+        Token keyword = previous();
+        Expr value = null;
+
+        // this check is because we could create a function that actually does not return a value but still want to exit the
+        // function earlier.
+        if (!check(SEMICOLON)) {
+            value = expression();
+        }
+        consume(SEMICOLON, "Expect ';' after return value.");
+        return new Stmt.Return(keyword, value);
     }
 
     private Stmt breakStatement() {
@@ -358,7 +381,13 @@ public class Parser {
                 }
 
                 // parse all the expression in the arguments.
-                arguments.add(expression());
+                if (match(FUN)) {
+                    // this means we hit an anonymous function.
+                    System.out.println("Anonymous function find.");
+                    // arguments.add(new Stmt.Function(new Token("anonym", IDENTIFIER, null, 1), ))
+                } else
+                    arguments.add(expression());
+
             } while (match(COMMA));
         }
 

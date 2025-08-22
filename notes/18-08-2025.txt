@@ -1,24 +1,60 @@
-In this section we are going to look at how to add support to function in our Jlox implementation of the language Lox.
+In this section we are going to look at how to add support to functions in our Jlox implementation of the language Lox.
 
-        `And that is also the way the human mind works—by the compounding of old ideas into new structures that become
+        `And that is also the way the human mind works`
+            — by the compounding of old ideas into new structures that become
             new ideas that can themselves be used in compounds, and round and round endlessly, growing ever more remote
-            from the basic earthbound imagery that is each language’s soil.`
+            from the basic earthbound imagery that is each language’s soil.
 
                 - Douglas R. Hofstadter, I Am a Strange Loop
 
 
         Functions calls:
        ------------------
-Functions calls are the parentheses that follow an identifier.
-So these parentheses is a new operator that has the highest precedence in the grammar.
+It is the parentheses that indicate a function call.
+So the parentheses following an expression is a new operator that has the highest precedence in the grammar.
 
 Here is the new grammar:
     unary       -> ('!' | '-') unary | call ;
     call        -> primary ( '(' arguments? ')' )* ;
-The arguments list argument is a new expression grammar:
-    arguments       -> expression ( ',' expression )* ;
+The arguments production in the call grammar is optional to support zero-argument in the list of arguments when calling a function.
 
+The 'arguments' list is a new expression grammar:
+    arguments       -> expression ( ',' expression )* ;         this grammar means that an argument can be any expression.
 
 The function's arity is the number of arguments that is passed to the function according to the number of parameters the
 function aspect. So if the function expect 3 arguments and that you provide 2 then we are in face of the arity problem.
 Some languages throw an error in the compile phase but other in runtime phase.
+
+Making print a statement in the jlox language is good for rapidly getting something on the screen but in production the print method is
+generally a built-in function to the language. So implementing our own language for production we should consider that.
+
+Built-in functions to the language are available in the global scope of the program, this means that all our built-in functions and methods will be
+accessible from everywhere in the interpreter.
+
+This is a weired problem I faced in this implementation of the JLox language, built-in and user's defined function can be overwritten by a complemently
+non-function object.
+
+
+        FUNCTIONS DECLARATIONS.
+       ------------------------
+Functions bind a name to a value just like variable definition.
+
+this is the new rule of the declaration grammar:
+declaration    → funDecl
+               | varDecl
+               | statement ;
+funDecl        -> "fun" function ;
+function       -> IDENTIFIER "(" parameters? ")" block ;
+parameters     -> IDENTIFIER ("," IDENTIFIER)* ;
+
+        RETURN STATEMENTS.
+       -------------------
+statement      → exprStmt
+               | forStmt
+               | ifStmt
+               | printStmt
+               | returnStmt
+               | whileStmt
+               | block ;
+
+returnStmt     → "return" expression? ";" ;

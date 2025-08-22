@@ -11,10 +11,12 @@ import java.util.List;
 // since it is a function it implements the LoxCallable interface.
 public class LoxFunction implements LoxCallable {
     private final Stmt.Function declaration;
+    private final Environment closure;  // this is for closure functions.
 
-    public LoxFunction(Stmt.Function declaration) {
+    public LoxFunction(Stmt.Function declaration, Environment closure) {
         // We get the entire function node and store it.
         this.declaration = declaration;
+        this.closure = closure;
     }
 
     @Override
@@ -26,7 +28,8 @@ public class LoxFunction implements LoxCallable {
     @Override
     public Object call(Interpreter interpreter, List<Object> arguments) {
         // first we create an inner scope for this function.
-        Environment environment = new Environment(interpreter.global());
+        // Environment environment = new Environment(interpreter.global());
+        Environment environment = new Environment(closure);
 
         /*
         * For each parameter we bind an argument value to that.
@@ -38,7 +41,11 @@ public class LoxFunction implements LoxCallable {
         }
 
         // now we execute the body of the function.
-        interpreter.executeBlock(this.declaration.body, environment);
+        try {
+            interpreter.executeBlock(this.declaration.body, environment);
+        } catch (Return returnValue) {
+            return returnValue.value;
+        }
         return null;
     }
 
