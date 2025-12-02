@@ -9,6 +9,7 @@ import lox.Main;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Optional;
 
 import static scanner.TokenType.*;
 
@@ -121,7 +122,7 @@ public class Parser {
             );
         }
 
-        if (condition == null) condition = new Expr.Literal(true);
+        if (condition == null) condition = new Expr.Literal(Optional.of(true));
         body = new Stmt.While(condition, body);
 
         if (initializer != null) {
@@ -290,8 +291,8 @@ public class Parser {
     }
 
     private Expr primary() {
-        if (match(FALSE)) return new Expr.Literal(false);
-        if (match(TRUE)) return new Expr.Literal(true);
+        if (match(FALSE)) return new Expr.Literal(Optional.of(false));
+        if (match(TRUE)) return new Expr.Literal(Optional.of(true));
         if (match(NIL)) return new Expr.Literal(null);
 
         if (match(NUMBER, STRING)) {

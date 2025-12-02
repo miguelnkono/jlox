@@ -2,10 +2,7 @@ package scanner;
 
 import lox.Main;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static scanner.TokenType.*;
 
@@ -187,7 +184,7 @@ public class Scanner {
         }
 
         double number = Double.parseDouble(source.substring(start, current));
-        addToken(NUMBER, number);
+        addToken(NUMBER, Optional.of(number));
     }
 
     // this function reads the next character in the source file.
